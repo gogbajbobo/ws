@@ -6,22 +6,31 @@ $(document).ready(function() {
 
 function doc_ready() {
 
-	var wsconn = ws_init(prompt_name());
+	var wsconn = ws_init(
+		function() {
+			prompt_name();
+		}, 
+		function() {
+			parse_message();
+		}
+	);
 
 }
 
-function ws_init(callback) {
+function ws_init(onopen, onmessage) {
 
 	var wsconn = new WebSocket('ws://maxbook.local:8081');
 
 	wsconn.onopen = function(e) {
 	    console.log("Connection established!");
 		$('body').data('wsconn', wsconn);
-	    callback();
+	    onopen();
 	};
 
 	wsconn.onmessage = function(e) {
 	    console.log('receive message: ' + e.data);
+	    $('body').data('message', e.data);
+	    onmessage();
 	};
 
 	wsconn.onerror = function(e) {
@@ -37,7 +46,7 @@ function ws_init(callback) {
 
 }
 
-function prompt_name(wsconn) {
+function prompt_name() {
 
 	var name_form = $('<form />').attr('id', 'name_form');
 	$('body').append(name_form);
@@ -124,3 +133,13 @@ function send_ws_message() {
 	};
 
 }
+
+function parse_message() {
+	console.log('parse message');
+	var message = $('body').data('message');
+	console.log(message);
+}
+
+
+
+
