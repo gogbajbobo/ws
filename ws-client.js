@@ -140,12 +140,22 @@ function send_ws_message() {
 function parse_message() {
 
 	var message = $('body').data('message');
-	if (message.charAt(0) == '@') {
+	var firstChar = message.charAt(0);
+
+	if (firstChar == '@') {
+
 		if ($('span#clients').text() == '') {
 			$('span#clients').text(message.substring(1));
 		} else {
 			$('span#clients').text([$('span#clients').text(), message.substring(1)].join());
 		}
+
+	} else if (firstChar == '!'){
+
+		var clients = $('span#clients').text().split(',');
+		clients.splice(clients.indexOf(message.substring(2)),1);
+		$('span#clients').text(clients.join());
+
 	};
 
 }
