@@ -85,6 +85,9 @@ function prompt_name() {
 function show_chat() {
 
 	$('body').empty();
+	$('body').prepend('<br />')
+	var clients = $('<span />').attr('id', 'clients');
+	$('body').prepend(clients);
 	var name = $('body').data('name');
 
 	var message_form = $('<form />').attr('id', 'message_form');
@@ -135,9 +138,16 @@ function send_ws_message() {
 }
 
 function parse_message() {
-	console.log('parse message');
+
 	var message = $('body').data('message');
-	console.log(message);
+	if (message.charAt(0) == '@') {
+		if ($('span#clients').text() == '') {
+			$('span#clients').text(message.substring(1));
+		} else {
+			$('span#clients').text([$('span#clients').text(), message.substring(1)].join());
+		}
+	};
+
 }
 
 

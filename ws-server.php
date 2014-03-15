@@ -24,6 +24,8 @@ class Chat implements MessageComponentInterface {
 
     public function onMessage(ConnectionInterface $from, $msg) {
 
+    	// echo 'Message ' . $msg . ' from ' . $from->resourceId . "\n";
+
     	$clients = $this->clients;
 
     	$first_char = mb_substr($msg, 0, 1);
@@ -36,9 +38,10 @@ class Chat implements MessageComponentInterface {
 					$names_list[] = $clients->offsetGet($client);
 				}
 			}
-			if (count($name_list) > 0) {
+			if (count($names_list) > 0) {
 				$names = implode(',', $names_list);
 				$from->send('@' . $names);
+				echo $names;
 			}
 
     		$username = mb_substr($msg, 1);
