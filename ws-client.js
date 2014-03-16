@@ -66,6 +66,7 @@ function prompt_name() {
 	);
 
 	$(name_form).submit(function(event) {
+		$('body').data('message', null);
 		event.preventDefault();
 		var name_input = $('input[name=name]');
 		var name = name_input.val();
@@ -85,7 +86,7 @@ function prompt_name() {
 function show_chat() {
 
 	$('body').empty();
-	$('body').prepend('<br />')
+	$('body').prepend('<br />');
 	var clients = $('<span />').attr('id', 'clients');
 	$('body').prepend(clients);
 	var name = $('body').data('name');
@@ -99,11 +100,21 @@ function show_chat() {
 				type: 'text',
 				name: 'message',
 				autofocus: 'autofocus',
+				size: '50'
 			})
 		),
 		$('<input />').attr({
 			type: 'submit',
 			value: 'OK'
+		})
+	);
+
+	$('body').append('<br />');
+	$('body').append(
+		$('<textarea />').attr({
+			id: 'chatarea',
+			rows: '20',
+			cols: '55'
 		})
 	);
 
@@ -115,6 +126,7 @@ function show_chat() {
 			$('body').data('message', message);
 			send_ws_message();
 			message_input.val(null);
+			$('textarea#chatarea').val($('textarea#chatarea').val() + message + '\n');
 		}
 		message_input.focus();
 	});
@@ -129,7 +141,8 @@ function send_ws_message() {
 
 	if (wsconn) {
 
-		var data = message ? name + '@' + message : '@' + name;
+		// var data = message ? name + '@' + message : '@' + name;
+		var data = message ? message : '@' + name;
 		console.log('Send: ' + data);
 		wsconn.send(data);
 
@@ -155,6 +168,11 @@ function parse_message() {
 		var clients = $('span#clients').text().split(',');
 		clients.splice(clients.indexOf(message.substring(2)),1);
 		$('span#clients').text(clients.join());
+
+	} else {
+
+		var msg = message.split('@');
+		$('textarea#chatarea').val($('textarea#chatarea').val() + msg[1] + ': ' + msg[0] + '\n');
 
 	};
 
